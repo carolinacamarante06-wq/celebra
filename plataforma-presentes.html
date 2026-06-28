@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Celebra — RSVP, Presentes & Portaria</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap');
+:root{
+  --champagne:#F5EFE6;--blush:#E8C9B8;--rose:#C9816A;--deep:#3D2B1F;
+  --sage:#8A9E8C;--cream:#FAF7F3;--white:#FFF;--border:#E5D9CE;
+  --text:#4A3728;--muted:#9B8578;--success:#6B9E7A;--error:#C9695A;
+  --wa:#25D366;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;}
+.screen{display:none;min-height:100vh;}
+.screen.active{display:block;}
+
+/* HOME */
+#home{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;
+  padding:2rem;background:linear-gradient(160deg,var(--champagne) 0%,var(--cream) 60%);position:relative;overflow:hidden;}
+#home.active{display:flex;}
+#home::before{content:'';position:absolute;top:-120px;right:-120px;width:400px;height:400px;
+  background:radial-gradient(circle,rgba(201,129,106,.12) 0%,transparent 70%);border-radius:50%;}
+.brand{font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:300;color:var(--deep);letter-spacing:.12em;margin-bottom:.25rem;}
+.brand em{font-style:italic;color:var(--rose);}
+.brand-sub{font-size:.75rem;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);margin-bottom:3rem;}
+.home-cards{display:grid;grid-template-columns:1fr 1fr;gap:1rem;width:100%;max-width:580px;margin-bottom:1.5rem;}
+.home-card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:1.75rem 1.25rem;
+  cursor:pointer;transition:all .25s;text-align:center;position:relative;overflow:hidden;}
+.home-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--blush),var(--rose));opacity:0;transition:opacity .25s;}
+.home-card:hover{transform:translateY(-3px);box-shadow:0 8px 32px rgba(61,43,31,.1);}
+.home-card:hover::before{opacity:1;}
+.home-card .icon{font-size:1.9rem;margin-bottom:.6rem;}
+.home-card h3{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:400;color:var(--deep);margin-bottom:.3rem;}
+.home-card p{font-size:.77rem;color:var(--muted);line-height:1.5;}
+.home-admin-link{font-size:.75rem;color:var(--muted);cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
+.home-admin-link:hover{color:var(--rose);}
+
+/* PANELS */
+.panel-header{background:var(--white);border-bottom:1px solid var(--border);padding:1.1rem 1.5rem;
+  display:flex;align-items:center;gap:1rem;position:sticky;top:0;z-index:100;}
+.back-btn{background:none;border:1px solid var(--border);border-radius:8px;padding:.4rem .9rem;
+  font-size:.8rem;cursor:pointer;color:var(--text);transition:all .2s;font-family:'Inter',sans-serif;}
+.back-btn:hover{background:var(--champagne);}
+.panel-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:400;color:var(--deep);flex:1;}
+.panel-body{padding:1.75rem 1.5rem;max-width:700px;margin:0 auto;}
+
+/* FORMS */
+.field{margin-bottom:1.1rem;}
+.field label{display:block;font-size:.72rem;font-weight:500;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:.45rem;}
+.field input,.field select,.field textarea{width:100%;padding:.7rem 1rem;border:1px solid var(--border);
+  border-radius:10px;font-family:'Inter',sans-serif;font-size:.88rem;color:var(--text);
+  background:var(--white);transition:border-color .2s;outline:none;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--rose);box-shadow:0 0 0 3px rgba(201,129,106,.1);}
+.field textarea{resize:vertical;min-height:80px;}
+.row-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem;}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.45rem;padding:.75rem 1.5rem;
+  border-radius:10px;font-family:'Inter',sans-serif;font-size:.86rem;font-weight:500;
+  cursor:pointer;border:none;transition:all .2s;text-decoration:none;white-space:nowrap;}
+.btn-primary{background:var(--rose);color:white;}
+.btn-primary:hover{background:#b8705a;transform:translateY(-1px);box-shadow:0 4px 16px rgba(201,129,106,.35);}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text);}
+.btn-outline:hover{background:var(--champagne);}
+.btn-ghost{background:transparent;color:var(--muted);font-size:.8rem;}
+.btn-ghost:hover{color:var(--rose);}
+.btn-success{background:var(--success);color:white;}
+.btn-success:hover{background:#5a8969;}
+.btn-wa{background:var(--wa);color:white;}
+.btn-wa:hover{background:#1da851;}
+.btn-danger{background:var(--error);color:white;}
+.btn-full{width:100%;}
+.btn-sm{padding:.5rem 1rem;font-size:.78rem;}
+
+/* RSVP SCREEN */
+.rsvp-hero{background:linear-gradient(160deg,var(--champagne) 0%,var(--cream) 100%);
+  padding:2.5rem 1.5rem 2rem;text-align:center;}
+.rsvp-event-badge{display:inline-block;font-size:.68rem;letter-spacing:.25em;text-transform:uppercase;
+  color:var(--rose);border:1px solid var(--blush);border-radius:20px;padding:.3rem 1rem;margin-bottom:.85rem;}
+.rsvp-event-name{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:300;
+  color:var(--deep);line-height:1.2;margin-bottom:.4rem;}
+.rsvp-event-detail{font-size:.83rem;color:var(--muted);margin-bottom:.2rem;}
+.rsvp-tabs{display:flex;border-bottom:1px solid var(--border);background:var(--white);
+  padding:0 1rem;gap:0;overflow-x:auto;}
+.rsvp-tab{padding:.9rem 1.1rem;font-size:.82rem;font-weight:500;color:var(--muted);
+  cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;}
+.rsvp-tab.active{color:var(--rose);border-bottom-color:var(--rose);}
+.rsvp-tab-content{display:none;}
+.rsvp-tab-content.active{display:block;}
+
+/* RSVP YES/NO */
+.rsvp-choice{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem;}
+.rsvp-option{border:2px solid var(--border);border-radius:12px;padding:1.1rem;
+  text-align:center;cursor:pointer;transition:all .2s;}
+.rsvp-option .opt-icon{font-size:1.6rem;margin-bottom:.4rem;}
+.rsvp-option .opt-label{font-size:.83rem;font-weight:500;color:var(--text);}
+.rsvp-option .opt-sub{font-size:.73rem;color:var(--muted);}
+.rsvp-option.selected.yes{border-color:var(--success);background:rgba(107,158,122,.07);}
+.rsvp-option.selected.no{border-color:var(--error);background:rgba(201,105,90,.07);}
+.rsvp-option:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.06);}
+
+/* TICKET */
+.ticket{background:var(--white);border:1px solid var(--border);border-radius:20px;overflow:hidden;
+  margin:1.25rem 0;box-shadow:0 4px 32px rgba(61,43,31,.08);}
+.ticket-top{background:linear-gradient(135deg,var(--deep) 0%,#5C3D2C 100%);padding:1.6rem;color:white;text-align:center;}
+.ticket-top .t-label{font-size:.63rem;letter-spacing:.3em;text-transform:uppercase;opacity:.6;margin-bottom:.45rem;}
+.ticket-top .t-name{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:300;}
+.ticket-top .t-event{font-size:.82rem;opacity:.75;margin-top:.2rem;}
+.ticket-top .t-type{font-size:.72rem;opacity:.55;margin-top:.15rem;}
+.ticket-divider{display:flex;align-items:center;background:var(--white);}
+.ticket-divider::before,.ticket-divider::after{content:'';flex:1;height:1px;
+  background:repeating-linear-gradient(90deg,var(--border) 0,var(--border) 6px,transparent 6px,transparent 12px);}
+.ticket-cut{width:40px;height:40px;background:var(--cream);border-radius:50%;border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.ticket-bottom{padding:1.4rem;text-align:center;}
+#qrcode-container{display:flex;justify-content:center;margin-bottom:.85rem;}
+#qrcode-container canvas,#qrcode-container img{border-radius:8px;}
+.ticket-code{font-size:.72rem;letter-spacing:.25em;color:var(--muted);text-transform:uppercase;}
+
+/* GIFTS */
+.gift-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:1.1rem;
+  display:flex;align-items:center;gap:.9rem;margin-bottom:.65rem;transition:all .2s;}
+.gift-card.reserved{opacity:.55;}
+.gift-emoji{font-size:1.9rem;flex-shrink:0;width:44px;text-align:center;}
+.gift-info{flex:1;min-width:0;}
+.gift-name{font-weight:500;font-size:.92rem;color:var(--deep);}
+.gift-desc{font-size:.78rem;color:var(--muted);margin-top:.15rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.gift-price{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:600;color:var(--rose);}
+.gift-status{font-size:.7rem;color:var(--success);font-weight:500;}
+.gift-status.taken{color:var(--muted);}
+.gift-actions{display:flex;flex-direction:column;align-items:flex-end;gap:.45rem;flex-shrink:0;}
+
+/* ADMIN */
+.admin-login{max-width:420px;margin:0 auto;padding:2rem 1.5rem;}
+.admin-login-card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:1.75rem;margin-top:1.5rem;}
+.admin-section{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:1.4rem;margin-bottom:1.1rem;}
+.admin-section h3{font-family:'Cormorant Garamond',serif;font-size:1.15rem;color:var(--deep);
+  margin-bottom:1.1rem;padding-bottom:.65rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.5rem;}
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:1.25rem;}
+.stat{background:var(--champagne);border-radius:12px;padding:.9rem;text-align:center;}
+.stat-num{font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:600;color:var(--deep);}
+.stat-label{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;}
+.guest-row{display:flex;align-items:center;gap:.7rem;padding:.7rem 0;border-bottom:1px solid var(--border);font-size:.855rem;}
+.guest-row:last-child{border-bottom:none;}
+.guest-avatar{width:34px;height:34px;background:var(--champagne);border-radius:50%;display:flex;
+  align-items:center;justify-content:center;font-size:.82rem;font-weight:600;color:var(--rose);flex-shrink:0;}
+.guest-name{flex:1;font-weight:500;}
+.guest-badge{font-size:.68rem;padding:.18rem .55rem;border-radius:20px;font-weight:500;}
+.badge-yes{background:rgba(107,158,122,.15);color:var(--success);}
+.badge-no{background:rgba(201,105,90,.12);color:var(--error);}
+.badge-kid{background:rgba(201,129,106,.15);color:var(--rose);}
+.add-gift-form{background:var(--champagne);border-radius:12px;padding:1.1rem;margin-bottom:.85rem;}
+.admin-gift-row{display:flex;align-items:center;gap:.7rem;padding:.7rem 0;border-bottom:1px solid var(--border);font-size:.855rem;}
+.admin-gift-row:last-child{border-bottom:none;}
+.admin-gift-info{flex:1;}
+.admin-gift-name{font-weight:500;}
+.admin-gift-price{font-size:.78rem;color:var(--muted);}
+
+/* TYPE SELECTOR */
+.type-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.7rem;}
+.type-option{border:2px solid var(--border);border-radius:10px;padding:.8rem;cursor:pointer;text-align:center;transition:all .2s;font-size:.83rem;}
+.type-option .type-icon{font-size:1.4rem;margin-bottom:.25rem;}
+.type-option:hover{border-color:var(--blush);}
+.type-option.selected{border-color:var(--rose);background:rgba(201,129,106,.07);}
+
+/* WHATSAPP BLAST */
+.wa-preview{background:#ECE5DD;border-radius:12px;padding:1rem;font-size:.85rem;line-height:1.55;
+  font-family:sans-serif;position:relative;margin:1rem 0;}
+.wa-preview::before{content:'';position:absolute;top:12px;left:-8px;border:8px solid transparent;border-right-color:#ECE5DD;}
+.wa-bubble{background:white;border-radius:0 12px 12px 12px;padding:.75rem 1rem;display:inline-block;max-width:100%;
+  box-shadow:0 1px 2px rgba(0,0,0,.1);white-space:pre-wrap;word-break:break-word;}
+.wa-time{font-size:.68rem;color:#999;text-align:right;margin-top:.3rem;}
+
+/* CSV UPLOAD */
+.upload-zone{border:2px dashed var(--border);border-radius:14px;padding:2rem;text-align:center;
+  cursor:pointer;transition:all .2s;background:var(--white);}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--rose);background:rgba(201,129,106,.04);}
+.upload-zone .up-icon{font-size:2.2rem;margin-bottom:.75rem;}
+.upload-zone p{font-size:.85rem;color:var(--muted);}
+.upload-zone strong{color:var(--rose);}
+
+/* PORTARIA / SCANNER */
+#scanner-screen{background:#1a1a1a;}
+#scanner-screen .panel-header{background:#222;border-bottom:1px solid #333;}
+#scanner-screen .panel-title{color:#fff;}
+#scanner-screen .back-btn{border-color:#444;color:#ccc;background:transparent;}
+.scanner-area{position:relative;background:#000;overflow:hidden;}
+#scanner-video{width:100%;display:block;max-height:60vh;object-fit:cover;}
+.scanner-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;}
+.scanner-frame{width:220px;height:220px;border:3px solid var(--rose);border-radius:12px;
+  box-shadow:0 0 0 9999px rgba(0,0,0,.45);position:relative;}
+.scanner-frame::before,.scanner-frame::after{content:'';position:absolute;width:32px;height:32px;border-color:var(--rose);}
+.scanner-frame::before{top:-3px;left:-3px;border-top:4px solid;border-left:4px solid;border-radius:4px 0 0 0;}
+.scanner-frame::after{bottom:-3px;right:-3px;border-bottom:4px solid;border-right:4px solid;border-radius:0 0 4px 0;}
+.scanner-line{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--rose),transparent);
+  animation:scan 2s linear infinite;}
+@keyframes scan{0%{top:0}100%{top:100%}}
+.scanner-info{padding:1.5rem;background:#1a1a1a;color:white;}
+.scanner-counter{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem;margin-bottom:1rem;}
+.counter-card{background:#2a2a2a;border-radius:12px;padding:1rem;text-align:center;}
+.counter-num{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:600;color:white;}
+.counter-label{font-size:.68rem;color:#888;text-transform:uppercase;letter-spacing:.08em;}
+.scan-result{padding:1rem;border-radius:12px;margin-bottom:1rem;font-size:.875rem;text-align:center;}
+.scan-ok{background:#1a3d2a;color:#6fcf97;border:1px solid #2d5a3a;}
+.scan-err{background:#3d1a1a;color:#f08080;border:1px solid #5a2d2d;}
+.scan-warn{background:#3d3000;color:#f0c060;border:1px solid #5a4800;}
+
+/* REPORT */
+.report-card{background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:1rem;}
+.report-card-header{background:var(--deep);color:white;padding:1rem 1.25rem;
+  font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:300;}
+.report-table{width:100%;border-collapse:collapse;font-size:.82rem;}
+.report-table th{background:var(--champagne);padding:.65rem 1rem;text-align:left;
+  font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600;}
+.report-table td{padding:.65rem 1rem;border-bottom:1px solid var(--border);}
+.report-table tr:last-child td{border-bottom:none;}
+.report-table tr:hover td{background:var(--cream);}
+
+/* UTILS */
+.section-title{font-family:'Cormorant Garamond',serif;font-size:1.45rem;font-weight:400;color:var(--deep);margin-bottom:.2rem;}
+.section-sub{font-size:.8rem;color:var(--muted);margin-bottom:1.4rem;}
+.alert{padding:.8rem 1rem;border-radius:10px;font-size:.83rem;margin-bottom:.9rem;}
+.alert-success{background:rgba(107,158,122,.12);color:#3d7a4f;border:1px solid rgba(107,158,122,.3);}
+.alert-error{background:rgba(201,105,90,.1);color:#9a3d2e;border:1px solid rgba(201,105,90,.3);}
+.alert-info{background:rgba(201,129,106,.08);color:var(--rose);border:1px solid var(--blush);}
+.empty-state{text-align:center;padding:2rem;color:var(--muted);font-size:.875rem;}
+.empty-state .empty-icon{font-size:2.2rem;margin-bottom:.65rem;}
+.separator{display:flex;align-items:center;gap:1rem;margin:1.4rem 0;}
+.separator span{font-size:.73rem;color:var(--muted);white-space:nowrap;}
+.separator::before,.separator::after{content:'';flex:1;height:1px;background:var(--border);}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;
+  align-items:center;justify-content:center;padding:1rem;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--white);border-radius:16px;padding:1.6rem;width:100%;max-width:420px;
+  box-shadow:0 8px 48px rgba(0,0,0,.2);}
+.modal h3{font-family:'Cormorant Garamond',serif;font-size:1.35rem;color:var(--deep);margin-bottom:.9rem;}
+.tag{display:inline-block;font-size:.68rem;padding:.2rem .55rem;border-radius:20px;font-weight:500;margin-left:.4rem;}
+.tag-adult{background:rgba(61,43,31,.1);color:var(--deep);}
+.tag-kid{background:rgba(201,129,106,.15);color:var(--rose);}
+.tab-nav{display:flex;gap:.5rem;margin-bottom:1.25rem;flex-wrap:wrap;}
+.tab-nav-btn{padding:.5rem 1rem;border-radius:8px;border:1px solid var(--border);font-size:.8rem;
+  cursor:pointer;background:transparent;color:var(--muted);font-family:'Inter',sans-serif;transition:all .2s;}
+.tab-nav-btn.active{background:var(--rose);color:white;border-color:var(--rose);}
+.progress-bar{height:6px;background:var(--border);border-radius:3px;margin:.5rem 0;}
+.progress-fill{height:100%;background:var(--rose);border-radius:3px;transition:width .4s;}
+.checklist-item{display:flex;gap:.75rem;align-items:flex-start;padding:.65rem 0;border-bottom:1px solid var(--border);font-size:.85rem;}
+.checklist-item:last-child{border-bottom:none;}
+.checklist-item input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--rose);flex-shrink:0;margin-top:1px;}
+
+@media(max-width:480px){
+  .home-cards{grid-template-columns:1fr;}
+  .rsvp-tab{padding:.8rem .85rem;font-size:.78rem;}
+  .row-2{grid-template-columns:1fr;}
+  .row-3{grid-template-columns:1fr 1fr;}
+  .stat-row{grid-template-columns:repeat(2,1fr);}
+  .brand{font-size:2.2rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING OVERLAY -->
+<div id="loading-overlay" style="position:fixed;inset:0;background:var(--cream);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem">
+  <div style="font-family:'Cormorant Garamond',serif;font-size:2.5rem;color:var(--deep);letter-spacing:.12em"><em style="color:var(--rose);font-style:italic">Celebra</em></div>
+  <div style="font-size:.78rem;color:var(--muted);letter-spacing:.2em;text-transform:uppercase">Carregando seus dados...</div>
+  <div style="width:60px;height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:.5rem">
+    <div style="height:100%;background:var(--rose);border-radius:2px;animation:lb 1.2s ease-in-out infinite"></div>
+  </div>
+</div>
+<style>@keyframes lb{0%{width:0%;margin-left:0}50%{width:100%;margin-left:0}100%{width:0%;margin-left:100%}}</style>
+
+<!-- ══ HOME ══ -->
+<div id="home" class="screen active">
+  <div class="brand"><em>Celebra</em></div>
+  <div class="brand-sub">RSVP · Presentes · Portaria</div>
+  <div class="home-cards">
+    <div class="home-card" onclick="showScreen('event-search')">
+      <div class="icon">💌</div>
+      <h3>Sou Convidado</h3>
+      <p>Confirme presença e veja a lista de presentes</p>
+    </div>
+    <div class="home-card" onclick="showScreen('admin-login')">
+      <div class="icon">✨</div>
+      <h3>Assessoria</h3>
+      <p>Gerenciar eventos, disparar RSVP e controlar portaria</p>
+    </div>
+  </div>
+  <span class="home-admin-link" onclick="showScreen('scanner-screen');startScanner()">📷 Modo Portaria (Scanner)</span>
+</div>
+
+<!-- ══ EVENT SEARCH ══ -->
+<div id="event-search" class="screen">
+  <div class="panel-header">
+    <button class="back-btn" onclick="showScreen('home')">← Voltar</button>
+    <span class="panel-title">Acessar Evento</span>
+  </div>
+  <div class="panel-body">
+    <div class="section-title">Bem-vindo!</div>
+    <div class="section-sub">Digite o código do evento recebido no convite.</div>
+    <div class="field">
+      <label>Código do Evento</label>
+      <input type="text" id="event-code-input" placeholder="Ex: CASAMENTO2025" style="text-transform:uppercase;letter-spacing:.1em" oninput="this.value=this.value.toUpperCase()">
+    </div>
+    <div id="event-search-error"></div>
+    <button class="btn btn-primary btn-full" onclick="findEvent()">Acessar →</button>
+    <div class="separator"><span>evento de demonstração</span></div>
+    <button class="btn btn-outline btn-full" onclick="loadDemoEvent()">Ver Demo 🎉</button>
+  </div>
+</div>
+
+<!-- ══ RSVP SCREEN ══ -->
+<div id="rsvp-screen" class="screen">
+  <div class="rsvp-hero">
+    <div class="rsvp-event-badge" id="rsvp-type-badge">Casamento</div>
+    <div class="rsvp-event-name" id="rsvp-event-name">Ana & Pedro</div>
+    <div class="rsvp-event-detail" id="rsvp-event-date">📅 15 de março de 2025</div>
+    <div class="rsvp-event-detail" id="rsvp-event-place">📍 Espaço Vila dos Sonhos, SP</div>
+  </div>
+  <div class="rsvp-tabs">
+    <div class="rsvp-tab active" onclick="switchRsvpTab('confirm',this)">💌 Confirmar</div>
+    <div class="rsvp-tab" onclick="switchRsvpTab('gifts',this)">🎁 Presentes</div>
+    <div class="rsvp-tab" onclick="switchRsvpTab('ticket',this)">🎟️ Ingresso</div>
+  </div>
+
+  <!-- TAB CONFIRM -->
+  <div id="tab-confirm" class="rsvp-tab-content active">
+    <div class="panel-body">
+      <div id="rsvp-already-done" style="display:none">
+        <div class="alert alert-success">✅ Presença confirmada! Acesse a aba "Ingresso" para ver seu QR Code.</div>
+        <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-top:.75rem">
+          <button class="btn btn-outline" style="flex:1" onclick="switchRsvpTab('ticket', document.querySelectorAll('.rsvp-tab')[2])">🎟️ Ver meu ingresso</button>
+          <button class="btn btn-ghost" onclick="showScreen('home')">← Voltar ao início</button>
+        </div>
+      </div>
+      <div id="rsvp-form-container">
+        <div class="section-title">RSVP</div>
+        <div class="section-sub">Confirme se você vai comparecer ao evento.</div>
+        <div class="field">
+          <label>Seu Nome Completo</label>
+          <input type="text" id="guest-name" placeholder="Nome completo">
+        </div>
+        <div class="field">
+          <label>Telefone (WhatsApp)</label>
+          <input type="tel" id="guest-phone" placeholder="(11) 99999-9999">
+        </div>
+        <div class="field">
+          <label>Você vai comparecer?</label>
+          <div class="rsvp-choice">
+            <div class="rsvp-option yes" id="opt-yes" onclick="selectRsvp('yes')">
+              <div class="opt-icon">🥂</div>
+              <div class="opt-label">Sim, vou!</div>
+              <div class="opt-sub">Com prazer</div>
+            </div>
+            <div class="rsvp-option no" id="opt-no" onclick="selectRsvp('no')">
+              <div class="opt-icon">😔</div>
+              <div class="opt-label">Não poderei</div>
+              <div class="opt-sub">Infelizmente</div>
+            </div>
+          </div>
+        </div>
+        <div id="yes-fields" style="display:none">
+          <div class="field">
+            <label>Acompanhantes adultos (além de você)</label>
+            <select id="companions-adult">
+              <option value="0">Nenhum</option>
+              <option value="1">1</option><option value="2">2</option>
+              <option value="3">3</option><option value="4">4</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Crianças menores de 7 anos</label>
+            <select id="companions-kid">
+              <option value="0">Nenhuma</option>
+              <option value="1">1</option><option value="2">2</option>
+              <option value="3">3</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Restrições Alimentares (opcional)</label>
+            <input type="text" id="dietary" placeholder="Vegetariano, sem glúten, etc.">
+          </div>
+        </div>
+        <div id="rsvp-error"></div>
+        <button class="btn btn-primary btn-full" onclick="submitRsvp()">Confirmar ✓</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB GIFTS -->
+  <div id="tab-gifts" class="rsvp-tab-content">
+    <div class="panel-body">
+      <div class="section-title">Lista de Presentes</div>
+      <div class="section-sub">Escolha um presente, reserve e pague pelo link.</div>
+      <div id="gift-list-container"></div>
+    </div>
+  </div>
+
+  <!-- TAB TICKET -->
+  <div id="tab-ticket" class="rsvp-tab-content">
+    <div class="panel-body">
+      <div id="ticket-no-rsvp">
+        <div class="alert alert-info">Confirme sua presença primeiro para gerar seu ingresso.</div>
+      </div>
+      <div id="ticket-rsvp-no" style="display:none">
+        <div class="alert alert-error">😔 Você indicou que não poderá comparecer — nenhum ingresso foi gerado.</div>
+      </div>
+      <div id="ticket-container" style="display:none">
+        <div class="ticket">
+          <div class="ticket-top">
+            <div class="t-label">Ingresso de Entrada</div>
+            <div class="t-name" id="ticket-guest-name"></div>
+            <div class="t-event" id="ticket-event-info"></div>
+            <div class="t-type" id="ticket-type-info"></div>
+          </div>
+          <div class="ticket-divider"><div class="ticket-cut">✂️</div></div>
+          <div class="ticket-bottom">
+            <div id="qrcode-container"></div>
+            <div class="ticket-code" id="ticket-code-display"></div>
+          </div>
+        </div>
+        <p style="font-size:.77rem;color:var(--muted);text-align:center;margin-bottom:1rem">
+          Apresente este QR Code na entrada. Tire um print para acesso offline.
+        </p>
+        <button class="btn btn-outline btn-full" onclick="window.print()">🖨️ Imprimir Ingresso</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ADMIN LOGIN ══ -->
+<div id="admin-login" class="screen">
+  <div class="panel-header">
+    <button class="back-btn" onclick="showScreen('home')">← Voltar</button>
+    <span class="panel-title">Assessoria</span>
+  </div>
+  <div class="admin-login">
+    <div style="text-align:center;margin-bottom:1.25rem">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.9rem;color:var(--deep)">Olá, assessora 👋</div>
+      <div style="font-size:.8rem;color:var(--muted);margin-top:.2rem">Entre para gerenciar seus eventos</div>
+    </div>
+    <div class="admin-login-card">
+      <div class="field"><label>E-mail</label><input type="email" id="admin-email" value="admin@celebra.com"></div>
+      <div class="field"><label>Senha</label><input type="password" id="admin-pass" value="celebra123"></div>
+      <div id="admin-login-error"></div>
+      <button class="btn btn-primary btn-full" onclick="adminLogin()">Entrar</button>
+      <div class="separator"><span>acesso demo</span></div>
+      <div style="font-size:.75rem;color:var(--muted);text-align:center">admin@celebra.com · celebra123</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ADMIN DASHBOARD ══ -->
+<div id="admin-dashboard" class="screen">
+  <div class="panel-header">
+    <button class="back-btn" onclick="adminLogout()">Sair</button>
+    <span class="panel-title">Meus Eventos</span>
+    <button class="btn btn-primary btn-sm" onclick="showScreen('admin-create')">+ Novo</button>
+  </div>
+  <div class="panel-body">
+    <div id="my-events-list"></div>
+  </div>
+</div>
+
+<!-- ══ ADMIN CREATE EVENT ══ -->
+<div id="admin-create" class="screen">
+  <div class="panel-header">
+    <button class="back-btn" onclick="showScreen('admin-dashboard')">← Voltar</button>
+    <span class="panel-title">Criar Evento</span>
+  </div>
+  <div class="panel-body">
+    <div class="admin-section">
+      <h3>Tipo de Evento</h3>
+      <div class="type-grid">
+        <div class="type-option selected" id="type-casamento" onclick="selectType('casamento')"><div class="type-icon">💍</div>Casamento</div>
+        <div class="type-option" id="type-aniversario" onclick="selectType('aniversario')"><div class="type-icon">🎂</div>Aniversário</div>
+        <div class="type-option" id="type-chadefraldas" onclick="selectType('chadefraldas')"><div class="type-icon">👶</div>Chá de Bebê</div>
+        <div class="type-option" id="type-formatura" onclick="selectType('formatura')"><div class="type-icon">🎓</div>Formatura</div>
+      </div>
+    </div>
+    <div class="admin-section">
+      <h3>Detalhes do Evento</h3>
+      <div class="field"><label>Nome do evento / homenageados</label><input type="text" id="ev-name" placeholder="Ex: Casamento de Ana & Pedro"></div>
+      <div class="row-2">
+        <div class="field"><label>Data</label><input type="date" id="ev-date"></div>
+        <div class="field"><label>Horário</label><input type="time" id="ev-time"></div>
+      </div>
+      <div class="field"><label>Local</label><input type="text" id="ev-place" placeholder="Nome e cidade do espaço"></div>
+      <div class="field"><label>Mensagem para os convidados (opcional)</label><textarea id="ev-message" placeholder="Ex: Sua presença é o nosso maior presente!"></textarea></div>
+    </div>
+    <div id="create-event-error"></div>
+    <button class="btn btn-primary btn-full" onclick="createEvent()">Criar Evento →</button>
+  </div>
+</div>
+
+<!-- ══ ADMIN EVENT DETAIL ══ -->
+<div id="admin-event-detail" class="screen">
+  <div class="panel-header">
+    <button class="back-btn" onclick="showScreen('admin-dashboard')">← Eventos</button>
+    <span class="panel-title" id="detail-title">Evento</span>
+    <button class="btn btn-outline btn-sm" onclick="openScanner()">📷 Portaria</button>
+  </div>
+  <div class="panel-body">
+
+    <!-- code card -->
+    <div class="admin-section" style="background:linear-gradient(135deg,var(--deep),#5C3D2C);border:none;text-align:center">
+      <div style="font-size:.67rem;letter-spacing:.25em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:.4rem">Código do Evento</div>
+      <div id="event-code-display" style="font-family:'Cormorant Garamond',serif;font-size:2.4rem;color:white;letter-spacing:.15em;font-weight:300"></div>
+      <div style="font-size:.75rem;color:rgba(255,255,255,.5);margin-top:.3rem">Compartilhe com os convidados</div>
+      <div style="display:flex;gap:.75rem;justify-content:center;margin-top:1rem;flex-wrap:wrap">
+        <button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:white;border:1px solid rgba(255,255,255,.3)" onclick="copyEventCode()">📋 Copiar</button>
+        <button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:white;border:1px solid rgba(255,255,255,.3)" onclick="showScreen('admin-whatsapp')">📲 Disparar RSVP</button>
+      </div>
+    </div>
+
+    <!-- stats -->
+    <div class="stat-row">
+      <div class="stat"><div class="stat-num" id="stat-total">0</div><div class="stat-label">Convidados</div></div>
+      <div class="stat"><div class="stat-num" id="stat-yes" style="color:var(--success)">0</div><div class="stat-label">Confirmados</div></div>
+      <div class="stat"><div class="stat-num" id="stat-kids" style="color:var(--rose)">0</div><div class="stat-label">Crianças &lt;7</div></div>
+      <div class="stat"><div class="stat-num" id="stat-gifts-reserved">0</div><div class="stat-label">Presentes</div></div>
+    </div>
+
+    <!-- tabs -->
+    <div class="tab-nav">
+      <button class="tab-nav-btn active" onclick="switchAdminTab('guests',this)">👥 Convidados</button>
+      <button class="tab-nav-btn" onclick="switchAdminTab('gifts',this)">🎁 Presentes</button>
+      <button class="tab-nav-btn" onclick="switchAdminTab('report',this)">📊 Relatório</button>
+    </div>
+
+    <!-- GUESTS -->
+    <div id="atab-guests">
+      <div class="admin-section">
+        <h3>📤 Importar Lista (CSV)</h3>
+        <div class="upload-zone" id="csv-drop" onclick="document.getElementById('csv-file').click()"
+          ondragover="event.preventDefault();this.classList.add('drag')"
+          ondragleave="this.classList.remove('drag')"
+          ondrop="handleCsvDrop(event)">
+          <div class="up-icon">📋</div>
+          <p>Arraste um CSV ou <strong>clique para selecionar</strong></p>
+          <p style="margin-top:.4rem;font-size:.75rem">Colunas: nome, telefone, tipo (adulto/criança)</p>
+        </div>
+        <input type="file" id="csv-file" accept=".csv" style="display:none" onchange="handleCsvFile(this)">
+        <div id="csv-preview" style="margin-top:.75rem"></div>
+        <div style="margin-top:.75rem;display:flex;gap:.75rem;flex-wrap:wrap">
+          <button class="btn btn-outline btn-sm" onclick="downloadCsvTemplate()">⬇️ Baixar Modelo CSV</button>
+          <button class="btn btn-outline btn-sm" onclick="addGuestManual()">+ Adicionar Manualmente</button>
+        </div>
+      </div>
+      <div class="admin-section">
+        <h3>Lista de Convidados</h3>
+        <div id="admin-guest-list"><div class="empty-state"><div class="empty-icon">💌</div>Nenhum convidado ainda</div></div>
+      </div>
+    </div>
+
+    <!-- GIFTS -->
+    <div id="atab-gifts" style="display:none">
+      <div class="admin-section">
+        <h3>➕ Adicionar Presente</h3>
+        <div class="add-gift-form">
+          <div class="row-2">
+            <div class="field" style="margin-bottom:.7rem"><label>Nome</label><input type="text" id="new-gift-name" placeholder="Jogo de Panelas"></div>
+            <div class="field" style="margin-bottom:.7rem"><label>Emoji</label><input type="text" id="new-gift-emoji" placeholder="🍳" maxlength="2"></div>
+          </div>
+          <div class="row-2">
+            <div class="field" style="margin-bottom:.7rem"><label>Valor (R$)</label><input type="number" id="new-gift-price" placeholder="350.00" step="0.01"></div>
+            <div class="field" style="margin-bottom:.7rem"><label>Link de Pagamento</label><input type="url" id="new-gift-link" placeholder="mercadopago.com/..."></div>
+          </div>
+          <div class="field" style="margin-bottom:.7rem"><label>Descrição (opcional)</label><input type="text" id="new-gift-desc" placeholder="Marca, tamanho..."></div>
+          <button class="btn btn-primary btn-sm" onclick="addGift()">+ Adicionar</button>
+        </div>
+        <div id="admin-gift-list"><div class="empty-state"><div class="empty-icon">🎁</div>Adicione presentes à lista</div></div>
+      </div>
+    </div>
+
+    <!-- REPORT -->
+    <div id="atab-report" style="display:none">
+      <div class="admin-section">
+        <h3>📊 Relatório de Presença</h3>
+        <div id="report-content"></div>
+        <div style="display:flex;gap:.75rem;margin-top:1rem;flex-wrap:wrap">
+          <button class="btn btn-primary btn-sm" onclick="generateReport()">🔄 Atualizar</button>
+          <button class="btn btn-outline btn-sm" onclick="exportReport()">⬇️ Exportar CSV</button>
+          <button class="btn btn-outline btn-sm" onclick="printReport()">🖨️ Imprimir</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ WHATSAPP BLAST ══ -->
+<div id="admin-whatsapp" class="screen">
+  <div class="panel-header">
+    <button class="back-btn" onclick="showScreen('admin-event-detail')">← Voltar</button>
+    <span class="panel-title">Disparar RSVP via WhatsApp</span>
+  </div>
+  <div class="panel-body">
+    <div class="alert alert-info">
+      📲 Os links serão gerados um a um para você disparar pelo WhatsApp Web ou pelo seu celular. O app abre a conversa já com a mensagem personalizada.
+    </div>
+
+    <div class="admin-section">
+      <h3>✏️ Mensagem</h3>
+      <div class="field">
+        <label>Texto (use {nome} para personalizar)</label>
+        <textarea id="wa-message-template" style="min-height:130px">Olá, {nome}! 🎉
+
+Você está convidado(a) para {evento}.
+
+📅 Data: {data}
+📍 Local: {local}
+
+Confirme sua presença pelo link abaixo:
+🔗 {link}
+
+Aguardamos você com muito carinho! 💕</textarea>
+      </div>
+      <div class="field">
+        <label>Pré-visualização (para: João Silva)</label>
+        <div class="wa-preview">
+          <div class="wa-bubble" id="wa-preview-text"></div>
+          <div class="wa-time">Agora ✓✓</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-section">
+      <h3>👥 Selecionar Convidados</h3>
+      <div style="display:flex;gap:.75rem;margin-bottom:.85rem;flex-wrap:wrap">
+        <button class="btn btn-outline btn-sm" onclick="selectAllWa(true)">✓ Todos</button>
+        <button class="btn btn-outline btn-sm" onclick="selectAllWa(false)">✗ Nenhum</button>
+        <button class="btn btn-outline btn-sm" onclick="selectPendingWa()">Sem resposta</button>
+      </div>
+      <div id="wa-guest-checklist"></div>
+    </div>
+
+    <div style="display:flex;gap:.75rem;flex-wrap:wrap">
+      <button class="btn btn-wa" style="flex:1;font-size:.9rem;padding:.9rem" onclick="startWaBlast()">📲 Abrir no WhatsApp (1 a 1)</button>
+      <button class="btn btn-primary" style="flex:1;font-size:.9rem;padding:.9rem" onclick="exportForExtension()">🔌 Exportar p/ Extensão</button>
+    </div>
+    <div id="extension-export-box" style="display:none;margin-top:1rem">
+      <div class="admin-section" style="background:var(--champagne)">
+        <h3>📋 Dados para a Extensão Chrome</h3>
+        <p style="font-size:.78rem;color:var(--muted);margin-bottom:.75rem">Copie o texto abaixo e cole na extensão <strong>Celebra</strong> do Chrome:</p>
+        <textarea id="extension-json-output" style="width:100%;height:100px;font-size:.72rem;font-family:monospace;border:1px solid var(--border);border-radius:8px;padding:.6rem;background:white;resize:none" readonly></textarea>
+        <button class="btn btn-primary btn-sm" style="margin-top:.5rem" onclick="copyExtensionJson()">📋 Copiar JSON</button>
+        <div id="ext-copy-ok" style="display:none" class="alert alert-success" style="margin-top:.5rem">✅ Copiado! Cole na extensão.</div>
+      </div>
+    </div>
+
+    <div id="wa-blast-queue" style="margin-top:1.25rem;display:none">
+      <div class="admin-section">
+        <h3>🚀 Fila de Disparo</h3>
+        <div id="wa-queue-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCANNER / PORTARIA ══ -->
+<div id="scanner-screen" class="screen">
+  <div class="panel-header">
+    <button class="back-btn" onclick="stopScanner();showScreen('home')">← Sair</button>
+    <span class="panel-title" style="color:#fff">Portaria — Scanner</span>
+    <button class="btn btn-sm" style="background:var(--rose);color:white;border:none" onclick="showManualEntry()">Manual</button>
+  </div>
+
+  <div class="scanner-area">
+    <video id="scanner-video" autoplay playsinline muted></video>
+    <div class="scanner-overlay">
+      <div class="scanner-frame">
+        <div class="scanner-line"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scanner-info">
+    <div id="scan-result-display"></div>
+    <div class="scanner-counter">
+      <div class="counter-card"><div class="counter-num" id="cnt-entered">0</div><div class="counter-label">Entradas</div></div>
+      <div class="counter-card"><div class="counter-num" id="cnt-adults" style="color:#6fcf97">0</div><div class="counter-label">Adultos</div></div>
+      <div class="counter-card"><div class="counter-num" id="cnt-kids" style="color:#f0c060">0</div><div class="counter-label">Crianças</div></div>
+    </div>
+    <div style="display:flex;gap:.75rem">
+      <button class="btn btn-outline btn-sm" style="border-color:#444;color:#ccc;background:transparent;flex:1" onclick="showScreen('admin-event-detail')">📋 Ver Lista</button>
+      <button class="btn btn-sm btn-primary" style="flex:1" onclick="exportEntryReport()">📊 Relatório</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MANUAL ENTRY MODAL ══ -->
+<div id="manual-modal" class="modal-overlay">
+  <div class="modal">
+    <h3>Entrada Manual</h3>
+    <div class="field"><label>Código do Ingresso</label><input type="text" id="manual-code" placeholder="DEMO2025-JOA123" style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase()"></div>
+    <div style="display:flex;gap:.75rem">
+      <button class="btn btn-primary" style="flex:1" onclick="processManualEntry()">Registrar Entrada</button>
+      <button class="btn btn-outline" onclick="closeManualModal()">Cancelar</button>
+    </div>
+    <div id="manual-result" style="margin-top:.75rem"></div>
+  </div>
+</div>
+
+<!-- ══ ADD GUEST MODAL ══ -->
+<div id="add-guest-modal" class="modal-overlay">
+  <div class="modal">
+    <h3>Adicionar Convidado</h3>
+    <div class="field"><label>Nome completo</label><input type="text" id="mg-name" placeholder="Nome do convidado"></div>
+    <div class="field"><label>Telefone (WhatsApp)</label><input type="tel" id="mg-phone" placeholder="(11) 99999-9999"></div>
+    <div class="field">
+      <label>Tipo</label>
+      <select id="mg-type">
+        <option value="adulto">Adulto</option>
+        <option value="criança">Criança (&lt; 7 anos)</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:.75rem">
+      <button class="btn btn-primary" style="flex:1" onclick="saveManualGuest()">Adicionar</button>
+      <button class="btn btn-outline" onclick="document.getElementById('add-guest-modal').classList.remove('open')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ RESERVE MODAL ══ -->
+<div id="reserve-modal" class="modal-overlay">
+  <div class="modal">
+    <h3>Reservar Presente</h3>
+    <p id="reserve-gift-name" style="color:var(--muted);font-size:.875rem;margin-bottom:1.1rem"></p>
+    <div class="field"><label>Seu Nome</label><input type="text" id="reserve-name" placeholder="Nome completo"></div>
+    <p style="font-size:.78rem;color:var(--muted);margin-bottom:1.1rem">Após clicar, você será redirecionado ao link de pagamento. O presente ficará reservado no seu nome.</p>
+    <div style="display:flex;gap:.75rem;flex-wrap:wrap">
+      <button class="btn btn-primary" style="flex:1" onclick="confirmReserve()">Reservar e Pagar 💳</button>
+      <button class="btn btn-outline" onclick="closeReserveModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════
+const S = {
+  events: {},
+  currentEvent: null,
+  currentGuest: null,
+  selectedRsvp: null,
+  selectedType: 'casamento',
+  selectedGift: null,
+  scannerStream: null,
+  scannerRunning: false,
+  scanInterval: null,
+  loaded: false,
+};
+
+// DEMO EVENT
+const DEMO = {
+  code:'DEMO2025', name:'Ana & Pedro', type:'casamento',
+  date:'2025-03-15', time:'18:00', place:'Espaço Vila dos Sonhos, São Paulo - SP',
+  message:'Sua presença é o nosso maior presente! 💕',
+  guests:[
+    {id:'g001',name:'Juliana Souza',phone:'11999990001',type:'adulto',rsvp:'yes',adultsPlus:1,kids:0,dietary:'',code:'DEMO2025-JUL001',entered:false,enteredAt:null},
+    {id:'g002',name:'Marcos Alves',phone:'11999990002',type:'adulto',rsvp:'no',adultsPlus:0,kids:0,dietary:'',code:'DEMO2025-MAR002',entered:false,enteredAt:null},
+    {id:'g003',name:'Carla Santos',phone:'11999990003',type:'adulto',rsvp:'',adultsPlus:0,kids:1,dietary:'vegetariana',code:'DEMO2025-CAR003',entered:false,enteredAt:null},
+  ],
+  gifts:[
+    {id:'gi1',name:'Jogo de Panelas',emoji:'🍳',price:350,desc:'Tramontina 5 peças',link:'#',reserved:false,reservedBy:''},
+    {id:'gi2',name:'Aspirador Robô',emoji:'🤖',price:890,desc:'iRobot Roomba 600',link:'#',reserved:true,reservedBy:'Tia Rosa'},
+    {id:'gi3',name:'Jogo de Cama Queen',emoji:'🛏️',price:280,desc:'400 fios off-white',link:'#',reserved:false,reservedBy:''},
+    {id:'gi4',name:'Liquidificador',emoji:'🥤',price:199,desc:'Oster copo de vidro',link:'#',reserved:false,reservedBy:''},
+  ]
+};
+
+// ══════════════════════════════════════════
+//  PERSISTENCE — Claude Storage API
+// ══════════════════════════════════════════
+const STORAGE_KEY = 'celebra_events_v1';
+
+async function saveData() {
+  try {
+    // Always keep DEMO in memory but don't persist it (it's hardcoded)
+    const toSave = {};
+    Object.entries(S.events).forEach(([k,v]) => { if(k !== 'DEMO2025') toSave[k] = v; });
+    await window.storage.set(STORAGE_KEY, JSON.stringify(toSave));
+  } catch(e) { console.warn('Falha ao salvar:', e); }
+}
+
+async function loadData() {
+  // Always load demo
+  S.events['DEMO2025'] = JSON.parse(JSON.stringify(DEMO));
+  try {
+    const result = await window.storage.get(STORAGE_KEY);
+    if (result && result.value) {
+      const saved = JSON.parse(result.value);
+      Object.assign(S.events, saved);
+    }
+  } catch(e) {
+    // no saved data yet, that's fine
+  }
+  S.loaded = true;
+  // hide loading overlay
+  const overlay = document.getElementById('loading-overlay');
+  if (overlay) overlay.style.display = 'none';
+}
+
+// Auto-save whenever event data changes
+function saveAfter(fn) {
+  return async function(...args) {
+    const result = fn.apply(this, args);
+    await saveData();
+    return result;
+  };
+}
+
+// ══════════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════════
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>{
+    s.classList.remove('active');
+    if(s.id==='home') s.style.display='none';
+  });
+  const el=document.getElementById(id);
+  el.classList.add('active');
+  if(id==='home') el.style.display='flex';
+  window.scrollTo(0,0);
+}
+
+// ══════════════════════════════════════════
+//  EVENT SEARCH
+// ══════════════════════════════════════════
+function findEvent(){
+  const code=document.getElementById('event-code-input').value.trim().toUpperCase();
+  const errEl=document.getElementById('event-search-error');
+  if(!code){errEl.innerHTML='<div class="alert alert-error">Digite o código.</div>';return;}
+  if(!S.events[code]){errEl.innerHTML='<div class="alert alert-error">Evento não encontrado.</div>';return;}
+  errEl.innerHTML='';
+  loadEvent(S.events[code]);
+}
+function loadDemoEvent(){loadEvent(DEMO);}
+function loadEvent(ev){
+  S.currentEvent=ev; S.currentGuest=null; S.selectedRsvp=null;
+  const types={casamento:'Casamento 💍',aniversario:'Aniversário 🎂',chadefraldas:'Chá de Bebê 👶',formatura:'Formatura 🎓'};
+  document.getElementById('rsvp-type-badge').textContent=types[ev.type]||'Evento';
+  document.getElementById('rsvp-event-name').textContent=ev.name;
+  document.getElementById('rsvp-event-date').textContent='📅 '+formatDate(ev.date)+(ev.time?' às '+ev.time:'');
+  document.getElementById('rsvp-event-place').textContent='📍 '+ev.place;
+  renderGiftList();
+  resetRsvpForm();
+  switchRsvpTab('confirm',document.querySelectorAll('.rsvp-tab')[0]);
+  showScreen('rsvp-screen');
+}
+
+// ══════════════════════════════════════════
+//  RSVP
+// ══════════════════════════════════════════
+function switchRsvpTab(tab,el){
+  document.querySelectorAll('.rsvp-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.rsvp-tab-content').forEach(t=>t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  document.getElementById('tab-'+tab).classList.add('active');
+  if(tab==='ticket') renderTicket();
+}
+function selectRsvp(choice){
+  S.selectedRsvp=choice;
+  ['yes','no'].forEach(c=>document.getElementById('opt-'+c).classList.remove('selected'));
+  document.getElementById('opt-'+choice).classList.add('selected');
+  document.getElementById('yes-fields').style.display=choice==='yes'?'block':'none';
+}
+function resetRsvpForm(){
+  S.selectedRsvp=null;
+  ['yes','no'].forEach(c=>document.getElementById('opt-'+c).classList.remove('selected'));
+  ['guest-name','guest-phone','dietary'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('yes-fields').style.display='none';
+  document.getElementById('rsvp-already-done').style.display='none';
+  document.getElementById('rsvp-form-container').style.display='block';
+  document.getElementById('rsvp-error').innerHTML='';
+}
+function submitRsvp(){
+  const name=document.getElementById('guest-name').value.trim();
+  const phone=document.getElementById('guest-phone').value.trim();
+  const errEl=document.getElementById('rsvp-error');
+  if(!name){errEl.innerHTML='<div class="alert alert-error">Digite seu nome.</div>';return;}
+  if(!S.selectedRsvp){errEl.innerHTML='<div class="alert alert-error">Selecione se vai comparecer.</div>';return;}
+  const adultsPlus=parseInt(document.getElementById('companions-adult').value||0);
+  const kids=parseInt(document.getElementById('companions-kid').value||0);
+  const code=S.currentEvent.code+'-'+name.replace(/\s/g,'').substring(0,3).toUpperCase()+String(Date.now()).slice(-3);
+  const guest={id:'g'+Date.now(),name,phone,type:'adulto',rsvp:S.selectedRsvp,adultsPlus,kids,
+    dietary:document.getElementById('dietary').value.trim(),code,entered:false,enteredAt:null};
+  S.currentEvent.guests=S.currentEvent.guests||[];
+  S.currentEvent.guests.push(guest);
+  S.currentGuest=guest;
+  document.getElementById('rsvp-form-container').style.display='none';
+  document.getElementById('rsvp-already-done').style.display='block';
+  renderTicket();
+  setTimeout(()=>switchRsvpTab('ticket',document.querySelectorAll('.rsvp-tab')[2]),700);
+}
+
+// ══════════════════════════════════════════
+//  TICKET
+// ══════════════════════════════════════════
+function renderTicket(){
+  const noRsvp=document.getElementById('ticket-no-rsvp');
+  const rsvpNo=document.getElementById('ticket-rsvp-no');
+  const cont=document.getElementById('ticket-container');
+  if(!S.currentGuest){noRsvp.style.display='block';rsvpNo.style.display='none';cont.style.display='none';return;}
+  if(S.currentGuest.rsvp==='no'){noRsvp.style.display='none';rsvpNo.style.display='block';cont.style.display='none';return;}
+  noRsvp.style.display='none';rsvpNo.style.display='none';cont.style.display='block';
+  const g=S.currentGuest;
+  const totalAdults=1+g.adultsPlus;
+  const kids=g.kids;
+  document.getElementById('ticket-guest-name').textContent=g.name;
+  document.getElementById('ticket-event-info').textContent=S.currentEvent.name+' · '+formatDate(S.currentEvent.date);
+  document.getElementById('ticket-type-info').textContent=
+    totalAdults+' adulto'+(totalAdults>1?'s':'')+(kids>0?' · '+kids+' criança'+(kids>1?'s':''):'');
+  document.getElementById('ticket-code-display').textContent=g.code;
+  const qrEl=document.getElementById('qrcode-container');
+  qrEl.innerHTML='';
+  // encode adults and kids counts into QR data
+  const qrData=JSON.stringify({code:g.code,name:g.name,adults:totalAdults,kids:kids});
+  new QRCode(qrEl,{text:qrData,width:160,height:160,colorDark:'#3D2B1F',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
+}
+
+// ══════════════════════════════════════════
+//  GIFTS
+// ══════════════════════════════════════════
+function renderGiftList(){
+  const cont=document.getElementById('gift-list-container');
+  const gifts=S.currentEvent.gifts||[];
+  if(!gifts.length){cont.innerHTML='<div class="empty-state"><div class="empty-icon">🎁</div>Nenhum presente na lista ainda.</div>';return;}
+  cont.innerHTML=gifts.map(g=>`
+    <div class="gift-card ${g.reserved?'reserved':''}">
+      <div class="gift-emoji">${g.emoji||'🎁'}</div>
+      <div class="gift-info">
+        <div class="gift-name">${g.name}</div>
+        ${g.desc?`<div class="gift-desc">${g.desc}</div>`:''}
+        <div class="gift-price">R$ ${fmtPrice(g.price)}</div>
+        ${g.reserved?`<div class="gift-status taken">Reservado por ${g.reservedBy}</div>`:'<div class="gift-status">Disponível ✓</div>'}
+      </div>
+      <div class="gift-actions">
+        ${g.reserved?'<span style="font-size:1.4rem">✅</span>'
+          :`<button class="btn btn-primary btn-sm" onclick="openReserveModal('${g.id}')">Reservar</button>`}
+      </div>
+    </div>`).join('');
+}
+function openReserveModal(id){
+  S.selectedGift=S.currentEvent.gifts.find(g=>g.id===id);
+  document.getElementById('reserve-gift-name').textContent=`${S.selectedGift.emoji} ${S.selectedGift.name} · R$ ${fmtPrice(S.selectedGift.price)}`;
+  document.getElementById('reserve-name').value=S.currentGuest?S.currentGuest.name:'';
+  document.getElementById('reserve-modal').classList.add('open');
+}
+function closeReserveModal(){document.getElementById('reserve-modal').classList.remove('open');S.selectedGift=null;}
+function confirmReserve(){
+  const name=document.getElementById('reserve-name').value.trim();
+  if(!name){alert('Digite seu nome.');return;}
+  S.selectedGift.reserved=true; S.selectedGift.reservedBy=name;
+  closeReserveModal(); renderGiftList();
+  if(S.selectedGift.link&&S.selectedGift.link!=='#') window.open(S.selectedGift.link,'_blank');
+  else alert('✅ Presente reservado! Em produção você seria redirecionado ao link de pagamento.');
+}
+
+// ══════════════════════════════════════════
+//  ADMIN
+// ══════════════════════════════════════════
+function adminLogin(){
+  const email=document.getElementById('admin-email').value.trim();
+  const pass=document.getElementById('admin-pass').value;
+  if(email==='admin@celebra.com'&&pass==='celebra123'){
+    renderAdminDashboard(); showScreen('admin-dashboard');
+  } else {
+    document.getElementById('admin-login-error').innerHTML='<div class="alert alert-error">Credenciais incorretas.</div>';
+  }
+}
+function adminLogout(){showScreen('home');}
+function renderAdminDashboard(){
+  const cont=document.getElementById('my-events-list');
+  const evs=Object.values(S.events);
+  if(!evs.length){cont.innerHTML='<div class="empty-state"><div class="empty-icon">✨</div>Nenhum evento ainda.<br>Clique em "+ Novo".</div>';return;}
+  const icons={casamento:'💍',aniversario:'🎂',chadefraldas:'👶',formatura:'🎓'};
+  cont.innerHTML=evs.map(ev=>`
+    <div class="admin-section" style="cursor:pointer" onclick="openAdminEvent('${ev.code}')">
+      <div style="display:flex;align-items:center;gap:.75rem">
+        <span style="font-size:1.6rem">${icons[ev.type]||'🎉'}</span>
+        <div style="flex:1">
+          <div style="font-weight:500;color:var(--deep)">${ev.name}</div>
+          <div style="font-size:.78rem;color:var(--muted)">${formatDate(ev.date)} · Código: <strong>${ev.code}</strong></div>
+        </div>
+        <span style="color:var(--muted)">›</span>
+      </div>
+      <div style="display:flex;gap:1.5rem;margin-top:.85rem;padding-top:.85rem;border-top:1px solid var(--border);font-size:.8rem">
+        <span><strong>${(ev.guests||[]).filter(g=>g.rsvp==='yes').length}</strong> confirmados</span>
+        <span><strong style="color:var(--rose)">${(ev.guests||[]).reduce((a,g)=>a+(g.kids||0),0)}</strong> crianças</span>
+        <span><strong>${(ev.gifts||[]).filter(g=>g.reserved).length}</strong> presentes</span>
+      </div>
+    </div>`).join('');
+}
+function openAdminEvent(code){
+  S.currentEvent=S.events[code];
+  document.getElementById('detail-title').textContent=S.currentEvent.name;
+  document.getElementById('event-code-display').textContent=code;
+  renderAdminEventDetail();
+  switchAdminTab('guests',document.querySelectorAll('.tab-nav-btn')[0]);
+  showScreen('admin-event-detail');
+}
+function renderAdminEventDetail(){
+  const ev=S.currentEvent;
+  const guests=ev.guests||[];
+  const confirmed=guests.filter(g=>g.rsvp==='yes');
+  const totalKids=confirmed.reduce((a,g)=>a+(g.kids||0),0);
+  document.getElementById('stat-total').textContent=guests.length;
+  document.getElementById('stat-yes').textContent=confirmed.length;
+  document.getElementById('stat-kids').textContent=totalKids;
+  document.getElementById('stat-gifts-reserved').textContent=(ev.gifts||[]).filter(g=>g.reserved).length;
+
+  // guest list
+  const gEl=document.getElementById('admin-guest-list');
+  if(!guests.length){gEl.innerHTML='<div class="empty-state"><div class="empty-icon">💌</div>Nenhum convidado ainda</div>';}
+  else{
+    gEl.innerHTML=guests.map(g=>`
+      <div class="guest-row">
+        <div class="guest-avatar">${g.name.charAt(0).toUpperCase()}</div>
+        <div style="flex:1">
+          <div class="guest-name">${g.name}${g.type==='criança'?'<span class="tag tag-kid">criança</span>':''}</div>
+          <div style="font-size:.73rem;color:var(--muted)">${g.phone||'—'}${g.adultsPlus>0?' · +'+g.adultsPlus+' adulto(s)':''}${g.kids>0?' · '+g.kids+' criança(s)':''}</div>
+        </div>
+        <span class="guest-badge ${g.rsvp==='yes'?'badge-yes':g.rsvp==='no'?'badge-no':''}">${g.rsvp==='yes'?'✓ Confirmado':g.rsvp==='no'?'✗ Não vai':'⏳ Pendente'}</span>
+        <button class="btn btn-ghost" style="padding:.25rem .5rem" onclick="removeGuest('${g.id}')">🗑️</button>
+      </div>`).join('');
+  }
+
+  // gift list
+  const gifts=ev.gifts||[];
+  const giftEl=document.getElementById('admin-gift-list');
+  if(!gifts.length){giftEl.innerHTML='<div class="empty-state"><div class="empty-icon">🎁</div>Adicione presentes</div>';}
+  else{
+    giftEl.innerHTML=gifts.map(g=>`
+      <div class="admin-gift-row">
+        <span style="font-size:1.4rem">${g.emoji||'🎁'}</span>
+        <div class="admin-gift-info">
+          <div class="admin-gift-name">${g.name}</div>
+          <div class="admin-gift-price">R$ ${fmtPrice(g.price)} ${g.reserved?`· <span style="color:var(--success)">Reservado — ${g.reservedBy}</span>`:''}</div>
+        </div>
+        <button class="btn btn-ghost" onclick="removeGift('${g.id}')">🗑️</button>
+      </div>`).join('');
+  }
+}
+function switchAdminTab(tab,el){
+  document.querySelectorAll('.tab-nav-btn').forEach(b=>b.classList.remove('active'));
+  if(el) el.classList.add('active');
+  ['guests','gifts','report'].forEach(t=>document.getElementById('atab-'+t).style.display='none');
+  document.getElementById('atab-'+tab).style.display='block';
+  if(tab==='report') generateReport();
+}
+function addGift(){
+  const name=document.getElementById('new-gift-name').value.trim();
+  const emoji=document.getElementById('new-gift-emoji').value.trim()||'🎁';
+  const price=parseFloat(document.getElementById('new-gift-price').value);
+  const link=document.getElementById('new-gift-link').value.trim();
+  const desc=document.getElementById('new-gift-desc').value.trim();
+  if(!name||!price){alert('Preencha nome e valor.');return;}
+  S.currentEvent.gifts=S.currentEvent.gifts||[];
+  S.currentEvent.gifts.push({id:'gi'+Date.now(),name,emoji,price,desc,link:link||'#',reserved:false,reservedBy:''});
+  ['new-gift-name','new-gift-emoji','new-gift-price','new-gift-link','new-gift-desc'].forEach(id=>document.getElementById(id).value='');
+  renderAdminEventDetail();
+}
+function removeGift(id){
+  if(!confirm('Remover este presente?'))return;
+  S.currentEvent.gifts=S.currentEvent.gifts.filter(g=>g.id!==id);
+  renderAdminEventDetail();
+}
+function removeGuest(id){
+  if(!confirm('Remover convidado?'))return;
+  S.currentEvent.guests=S.currentEvent.guests.filter(g=>g.id!==id);
+  renderAdminEventDetail();
+}
+function copyEventCode(){
+  navigator.clipboard.writeText(S.currentEvent.code).then(()=>alert('Código copiado: '+S.currentEvent.code));
+}
+function selectType(t){
+  S.selectedType=t;
+  document.querySelectorAll('.type-option').forEach(el=>el.classList.remove('selected'));
+  document.getElementById('type-'+t).classList.add('selected');
+}
+function createEvent(){
+  const name=document.getElementById('ev-name').value.trim();
+  const date=document.getElementById('ev-date').value;
+  const time=document.getElementById('ev-time').value;
+  const place=document.getElementById('ev-place').value.trim();
+  const message=document.getElementById('ev-message').value.trim();
+  const errEl=document.getElementById('create-event-error');
+  if(!name||!date||!place){errEl.innerHTML='<div class="alert alert-error">Preencha nome, data e local.</div>';return;}
+  const code=name.replace(/[^a-zA-Z0-9]/g,'').substring(0,8).toUpperCase()+new Date().getFullYear();
+  const ev={code,name,type:S.selectedType,date,time,place,message,guests:[],gifts:[]};
+  S.events[code]=ev;
+  errEl.innerHTML='';
+  ['ev-name','ev-date','ev-time','ev-place','ev-message'].forEach(id=>document.getElementById(id).value='');
+  renderAdminDashboard();
+  openAdminEvent(code);
+}
+
+// ══════════════════════════════════════════
+//  CSV IMPORT
+// ══════════════════════════════════════════
+function handleCsvDrop(e){
+  e.preventDefault();
+  document.getElementById('csv-drop').classList.remove('drag');
+  const file=e.dataTransfer.files[0];
+  if(file) parseCsv(file);
+}
+function handleCsvFile(input){if(input.files[0]) parseCsv(input.files[0]);}
+function parseCsv(file){
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const lines=e.target.result.trim().split('\n');
+    const header=lines[0].toLowerCase().split(/[,;]/);
+    const nameIdx=header.findIndex(h=>h.includes('nome'));
+    const phoneIdx=header.findIndex(h=>h.includes('telefone')||h.includes('phone'));
+    const typeIdx=header.findIndex(h=>h.includes('tipo')||h.includes('type'));
+    const imported=[];
+    for(let i=1;i<lines.length;i++){
+      const cols=lines[i].split(/[,;]/);
+      if(!cols[nameIdx]||!cols[nameIdx].trim()) continue;
+      const name=cols[nameIdx].trim();
+      const phone=(cols[phoneIdx]||'').trim();
+      const type=(cols[typeIdx]||'adulto').trim().toLowerCase();
+      const code=S.currentEvent.code+'-'+name.replace(/\s/g,'').substring(0,3).toUpperCase()+String(1000+i);
+      imported.push({id:'g'+Date.now()+i,name,phone,type:type.includes('crian')? 'criança':'adulto',
+        rsvp:'',adultsPlus:0,kids:0,dietary:'',code,entered:false,enteredAt:null});
+    }
+    S.currentEvent.guests=[...(S.currentEvent.guests||[]),...imported];
+    document.getElementById('csv-preview').innerHTML=`<div class="alert alert-success">✅ ${imported.length} convidado(s) importado(s)!</div>`;
+    renderAdminEventDetail();
+  };
+  reader.readAsText(file,'UTF-8');
+}
+function downloadCsvTemplate(){
+  const csv='nome,telefone,tipo\nJoão Silva,11999990001,adulto\nMaria Souza,11999990002,adulto\nPedrinho (criança),11999990003,criança\n';
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='modelo_convidados.csv'; a.click();
+}
+function addGuestManual(){document.getElementById('add-guest-modal').classList.add('open');}
+function saveManualGuest(){
+  const name=document.getElementById('mg-name').value.trim();
+  const phone=document.getElementById('mg-phone').value.trim();
+  const type=document.getElementById('mg-type').value;
+  if(!name){alert('Digite o nome.');return;}
+  const code=S.currentEvent.code+'-'+name.replace(/\s/g,'').substring(0,3).toUpperCase()+String(Date.now()).slice(-4);
+  S.currentEvent.guests=S.currentEvent.guests||[];
+  S.currentEvent.guests.push({id:'g'+Date.now(),name,phone,type,rsvp:'',adultsPlus:0,kids:0,dietary:'',code,entered:false,enteredAt:null});
+  document.getElementById('add-guest-modal').classList.remove('open');
+  document.getElementById('mg-name').value=''; document.getElementById('mg-phone').value='';
+  renderAdminEventDetail();
+}
+
+// ══════════════════════════════════════════
+//  WHATSAPP BLAST
+// ══════════════════════════════════════════
+function showScreen_wa(){showScreen('admin-whatsapp');renderWaScreen();}
+document.addEventListener('DOMContentLoaded',()=>{
+  const tpl=document.getElementById('wa-message-template');
+  if(tpl) tpl.addEventListener('input',updateWaPreview);
+});
+function renderWaScreen(){
+  updateWaPreview();
+  const cl=document.getElementById('wa-guest-checklist');
+  const guests=S.currentEvent.guests||[];
+  if(!guests.length){cl.innerHTML='<div class="empty-state"><div class="empty-icon">👥</div>Importe convidados primeiro.</div>';return;}
+  cl.innerHTML=guests.map(g=>`
+    <div class="checklist-item">
+      <input type="checkbox" id="wa-chk-${g.id}" checked>
+      <div style="flex:1">
+        <label for="wa-chk-${g.id}" style="cursor:pointer;font-weight:500">${g.name}</label>
+        <div style="font-size:.75rem;color:var(--muted)">${g.phone||'sem telefone'} · ${g.rsvp==='yes'?'✓ confirmado':g.rsvp==='no'?'✗ recusou':'⏳ pendente'}</div>
+      </div>
+    </div>`).join('');
+}
+function updateWaPreview(){
+  const tpl=document.getElementById('wa-message-template');
+  const prev=document.getElementById('wa-preview-text');
+  if(!tpl||!prev) return;
+  const ev=S.currentEvent||{name:'Nome do Evento',date:'2025-01-01',place:'Local do Evento',code:'CODIGO'};
+  const text=tpl.value
+    .replace(/{nome}/g,'João Silva')
+    .replace(/{evento}/g,ev.name)
+    .replace(/{data}/g,formatDate(ev.date))
+    .replace(/{local}/g,ev.place)
+    .replace(/{link}/g,window.location.href.split('?')[0]+'?evento='+ev.code);
+  prev.textContent=text;
+}
+function selectAllWa(v){
+  document.querySelectorAll('[id^="wa-chk-"]').forEach(c=>c.checked=v);
+}
+function selectPendingWa(){
+  const guests=S.currentEvent.guests||[];
+  guests.forEach(g=>{
+    const chk=document.getElementById('wa-chk-'+g.id);
+    if(chk) chk.checked=!g.rsvp;
+  });
+}
+function startWaBlast(){
+  const tpl=document.getElementById('wa-message-template').value;
+  const ev=S.currentEvent;
+  const selected=[];
+  (ev.guests||[]).forEach(g=>{
+    const chk=document.getElementById('wa-chk-'+g.id);
+    if(chk&&chk.checked&&g.phone) selected.push(g);
+  });
+  if(!selected.length){alert('Selecione pelo menos um convidado com telefone.');return;}
+  document.getElementById('wa-blast-queue').style.display='block';
+  const qEl=document.getElementById('wa-queue-list');
+  qEl.innerHTML=selected.map((g,i)=>{
+    const msg=tpl
+      .replace(/{nome}/g,g.name)
+      .replace(/{evento}/g,ev.name)
+      .replace(/{data}/g,formatDate(ev.date))
+      .replace(/{local}/g,ev.place)
+      .replace(/{link}/g,window.location.href.split('?')[0]+'?evento='+ev.code);
+    const phone=g.phone.replace(/\D/g,'');
+    const waUrl=`https://wa.me/55${phone}?text=${encodeURIComponent(msg)}`;
+    return `<div class="admin-gift-row" id="wa-row-${g.id}">
+      <div class="guest-avatar">${g.name.charAt(0)}</div>
+      <div style="flex:1"><div style="font-weight:500">${g.name}</div><div style="font-size:.75rem;color:var(--muted)">${g.phone}</div></div>
+      <a href="${waUrl}" target="_blank" class="btn btn-wa btn-sm" onclick="markWaSent('${g.id}')">📲 Enviar</a>
+    </div>`;
+  }).join('');
+}
+function markWaSent(id){
+  const row=document.getElementById('wa-row-'+id);
+  if(row) row.style.opacity='0.45';
+}
+
+// ══════════════════════════════════════════
+//  SCANNER / PORTARIA
+// ══════════════════════════════════════════
+function openScanner(){
+  showScreen('scanner-screen');
+  startScanner();
+}
+function startScanner(){
+  if(S.scannerRunning) return;
+  const video=document.getElementById('scanner-video');
+  navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}})
+    .then(stream=>{
+      S.scannerStream=stream;
+      video.srcObject=stream;
+      S.scannerRunning=true;
+      S.scanInterval=setInterval(()=>scanFrame(video),400);
+    })
+    .catch(()=>{
+      document.getElementById('scan-result-display').innerHTML=
+        '<div class="scan-warn">📷 Câmera não disponível. Use a entrada manual.</div>';
+    });
+}
+function stopScanner(){
+  S.scannerRunning=false;
+  if(S.scanInterval){clearInterval(S.scanInterval);S.scanInterval=null;}
+  if(S.scannerStream){S.scannerStream.getTracks().forEach(t=>t.stop());S.scannerStream=null;}
+}
+function scanFrame(video){
+  if(video.readyState!==video.HAVE_ENOUGH_DATA) return;
+  const canvas=document.createElement('canvas');
+  canvas.width=video.videoWidth; canvas.height=video.videoHeight;
+  const ctx=canvas.getContext('2d');
+  ctx.drawImage(video,0,0);
+  const imageData=ctx.getImageData(0,0,canvas.width,canvas.height);
+  const code=jsQR(imageData.data,imageData.width,imageData.height,{inversionAttempts:'dontInvert'});
+  if(code) processQrEntry(code.data);
+}
+function processQrEntry(rawData){
+  let data;
+  try{data=JSON.parse(rawData);}catch(e){data={code:rawData};}
+  const code=data.code||rawData;
+  // find guest across all events or in current event
+  let guest=null;
+  let ev=S.currentEvent;
+  if(ev){guest=(ev.guests||[]).find(g=>g.code===code);}
+  if(!guest){
+    for(const e of Object.values(S.events)){
+      guest=(e.guests||[]).find(g=>g.code===code);
+      if(guest){ev=e;break;}
+    }
+  }
+  const resEl=document.getElementById('scan-result-display');
+  if(!guest){resEl.innerHTML='<div class="scan-err">❌ Código não encontrado: '+code+'</div>';return;}
+  if(guest.entered){
+    resEl.innerHTML=`<div class="scan-warn">⚠️ ${guest.name} — já registrou entrada às ${guest.enteredAt}</div>`;
+    return;
+  }
+  guest.entered=true;
+  guest.enteredAt=new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  const adults=data.adults||1; const kids=data.kids||guest.kids||0;
+  resEl.innerHTML=`<div class="scan-ok">✅ ${guest.name} — ${adults} adulto${adults>1?'s':''}${kids>0?' · '+kids+' criança':''}  · ${guest.enteredAt}</div>`;
+  updateScannerCounters();
+}
+function updateScannerCounters(){
+  let entered=0,adults=0,kids=0;
+  Object.values(S.events).forEach(ev=>{
+    (ev.guests||[]).forEach(g=>{
+      if(g.entered){
+        entered++;
+        adults+=1+(g.adultsPlus||0);
+        kids+=g.kids||0;
+      }
+    });
+  });
+  document.getElementById('cnt-entered').textContent=entered;
+  document.getElementById('cnt-adults').textContent=adults;
+  document.getElementById('cnt-kids').textContent=kids;
+}
+function showManualEntry(){document.getElementById('manual-modal').classList.add('open');}
+function closeManualModal(){document.getElementById('manual-modal').classList.remove('open');}
+function processManualEntry(){
+  const code=document.getElementById('manual-code').value.trim().toUpperCase();
+  const resEl=document.getElementById('manual-result');
+  if(!code){resEl.innerHTML='<div class="alert alert-error">Digite o código.</div>';return;}
+  processQrEntry(code);
+  resEl.innerHTML='<div class="alert alert-success">Entrada registrada!</div>';
+  setTimeout(()=>{closeManualModal();document.getElementById('manual-code').value='';},1200);
+}
+function exportEntryReport(){
+  const rows=[['Nome','Código','Hora de Entrada','Adultos','Crianças']];
+  Object.values(S.events).forEach(ev=>{
+    (ev.guests||[]).filter(g=>g.entered).forEach(g=>{
+      rows.push([g.name,g.code,g.enteredAt||'',1+(g.adultsPlus||0),g.kids||0]);
+    });
+  });
+  downloadCsvData(rows,'relatorio_presencas.csv');
+}
+
+// ══════════════════════════════════════════
+//  REPORT
+// ══════════════════════════════════════════
+function generateReport(){
+  const ev=S.currentEvent;
+  const guests=ev.guests||[];
+  const confirmed=guests.filter(g=>g.rsvp==='yes');
+  const entered=guests.filter(g=>g.entered);
+  const totalAdults=entered.reduce((a,g)=>a+1+(g.adultsPlus||0),0);
+  const totalKids=entered.reduce((a,g)=>a+(g.kids||0),0);
+  const notEntered=confirmed.filter(g=>!g.entered);
+
+  const html=`
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem;margin-bottom:1rem">
+      <div class="stat"><div class="stat-num">${confirmed.length}</div><div class="stat-label">Confirmados</div></div>
+      <div class="stat"><div class="stat-num" style="color:var(--success)">${entered.length}</div><div class="stat-label">Presentes</div></div>
+      <div class="stat"><div class="stat-num" style="color:var(--rose)">${totalKids}</div><div class="stat-label">Crianças &lt;7</div></div>
+    </div>
+    <div style="margin-bottom:1rem">
+      <div style="font-size:.78rem;color:var(--muted);margin-bottom:.3rem">Presença geral</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${confirmed.length>0?Math.round(entered.length/confirmed.length*100):0}%"></div></div>
+      <div style="font-size:.75rem;color:var(--muted);margin-top:.2rem">${entered.length} de ${confirmed.length} confirmados presentes (${confirmed.length>0?Math.round(entered.length/confirmed.length*100):0}%)</div>
+    </div>
+    <div style="font-size:.8rem;color:var(--muted);margin-bottom:.5rem;font-weight:500">ADULTOS PRESENTES: ${totalAdults} · CRIANÇAS PRESENTES: ${totalKids}</div>
+    <div class="report-card">
+      <div class="report-card-header">✅ Presentes no Evento (${entered.length})</div>
+      ${entered.length?`<table class="report-table">
+        <tr><th>Nome</th><th>Hora de Entrada</th><th>+Adultos</th><th>+Crianças</th></tr>
+        ${entered.map(g=>`<tr><td>${g.name}</td><td>${g.enteredAt||'—'}</td><td>${g.adultsPlus||0}</td><td>${g.kids||0}</td></tr>`).join('')}
+      </table>`:'<div class="empty-state">Nenhuma entrada registrada ainda</div>'}
+    </div>
+    ${notEntered.length?`<div class="report-card">
+      <div class="report-card-header" style="background:#5a3d2c">⏳ Confirmados Não Chegaram (${notEntered.length})</div>
+      <table class="report-table">
+        <tr><th>Nome</th><th>Telefone</th></tr>
+        ${notEntered.map(g=>`<tr><td>${g.name}</td><td>${g.phone||'—'}</td></tr>`).join('')}
+      </table>
+    </div>`:''}`;
+  document.getElementById('report-content').innerHTML=html;
+}
+function exportReport(){
+  const ev=S.currentEvent;
+  const guests=ev.guests||[];
+  const rows=[['Nome','Telefone','RSVP','Presente','Hora Entrada','Adultos Extras','Crianças <7','Dietary']];
+  guests.forEach(g=>rows.push([g.name,g.phone||'',g.rsvp||'pendente',g.entered?'Sim':'Não',g.enteredAt||'',g.adultsPlus||0,g.kids||0,g.dietary||'']));
+  downloadCsvData(rows,'relatorio_'+ev.code+'.csv');
+}
+function printReport(){window.print();}
+function downloadCsvData(rows,filename){
+  const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
+  a.download=filename; a.click();
+}
+
+// ══════════════════════════════════════════
+//  UTILS
+// ══════════════════════════════════════════
+function formatDate(d){
+  if(!d) return '';
+  const [y,m,day]=d.split('-');
+  const months=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+  return `${parseInt(day)} de ${months[parseInt(m)-1]} de ${y}`;
+}
+function fmtPrice(p){return Number(p).toFixed(2).replace('.',',');}
+
+// intercept wa button in header to go to correct place
+document.addEventListener('click',e=>{
+  if(e.target.textContent.includes('Disparar RSVP')){
+    showScreen('admin-whatsapp');
+    renderWaScreen();
+  }
+});
+
+// ══════════════════════════════════════════
+//  EXPORT FOR CHROME EXTENSION
+// ══════════════════════════════════════════
+function exportForExtension() {
+  const ev = S.currentEvent;
+  if (!ev) return;
+
+  // Get selected guests from checkboxes
+  const selected = [];
+  (ev.guests || []).forEach(g => {
+    const chk = document.getElementById('wa-chk-' + g.id);
+    if (chk && chk.checked) selected.push(g);
+  });
+
+  if (!selected.length) {
+    alert('Selecione pelo menos um convidado.');
+    return;
+  }
+
+  const template = document.getElementById('wa-message-template').value;
+  const baseUrl = window.location.href.split('?')[0];
+  const rsvpLink = baseUrl + '?evento=' + ev.code;
+
+  const payload = {
+    eventName:  ev.name,
+    eventDate:  formatDate(ev.date) + (ev.time ? ' às ' + ev.time : ''),
+    eventPlace: ev.place,
+    rsvpLink:   rsvpLink,
+    template:   template,
+    guests: selected.map(g => ({
+      id:    g.id,
+      name:  g.name,
+      phone: g.phone || '',
+      rsvp:  g.rsvp  || '',
+    }))
+  };
+
+  const json = JSON.stringify(payload, null, 2);
+  document.getElementById('extension-json-output').value = json;
+  document.getElementById('extension-export-box').style.display = 'block';
+  document.getElementById('extension-json-output').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function copyExtensionJson() {
+  const ta = document.getElementById('extension-json-output');
+  navigator.clipboard.writeText(ta.value).then(() => {
+    const ok = document.getElementById('ext-copy-ok');
+    ok.style.display = 'block';
+    setTimeout(() => ok.style.display = 'none', 3000);
+  });
+}
+
+// ══════════════════════════════════════════
+//  AUTO-SAVE WRAPPERS
+// ══════════════════════════════════════════
+const _orig = {};
+function wrapSave(name, fn) {
+  _orig[name] = fn;
+  return async function(...args) { const r = _orig[name].apply(this, args); await saveData(); return r; };
+}
+
+// Patch parseCsv to be async-save aware
+const _origParseCsv = parseCsv;
+parseCsv = function(file){
+  const reader = new FileReader();
+  reader.onload = async e => {
+    const lines = e.target.result.trim().split('\n');
+    const header = lines[0].toLowerCase().split(/[,;]/);
+    const nameIdx = header.findIndex(h=>h.includes('nome'));
+    const phoneIdx = header.findIndex(h=>h.includes('telefone')||h.includes('phone'));
+    const typeIdx = header.findIndex(h=>h.includes('tipo')||h.includes('type'));
+    const imported = [];
+    for(let i=1;i<lines.length;i++){
+      const cols = lines[i].split(/[,;]/);
+      if(!cols[nameIdx]||!cols[nameIdx].trim()) continue;
+      const name = cols[nameIdx].trim();
+      const phone = (cols[phoneIdx]||'').trim();
+      const type = (cols[typeIdx]||'adulto').trim().toLowerCase();
+      const code = S.currentEvent.code+'-'+name.replace(/\s/g,'').substring(0,3).toUpperCase()+String(1000+i);
+      imported.push({id:'g'+Date.now()+i,name,phone,
+        type:type.includes('crian')?'criança':'adulto',
+        rsvp:'',adultsPlus:0,kids:0,dietary:'',code,entered:false,enteredAt:null});
+    }
+    S.currentEvent.guests=[...(S.currentEvent.guests||[]),...imported];
+    document.getElementById('csv-preview').innerHTML=
+      `<div class="alert alert-success">✅ ${imported.length} convidado(s) importado(s)!</div>`;
+    renderAdminEventDetail();
+    await saveData();
+  };
+  reader.readAsText(file,'UTF-8');
+};
+
+// Patch processQrEntry to save after scan
+const _origQr = processQrEntry;
+processQrEntry = function(rawData){
+  _origQr(rawData);
+  saveData();
+};
+
+// Wrap all mutation functions
+submitRsvp    = wrapSave('submitRsvp',    submitRsvp);
+createEvent   = wrapSave('createEvent',   createEvent);
+addGift       = wrapSave('addGift',       addGift);
+removeGift    = wrapSave('removeGift',    removeGift);
+removeGuest   = wrapSave('removeGuest',   removeGuest);
+confirmReserve= wrapSave('confirmReserve',confirmReserve);
+saveManualGuest=wrapSave('saveManualGuest',saveManualGuest);
+
+// ══════════════════════════════════════════
+//  BOOT — load persisted data, then show app
+// ══════════════════════════════════════════
+(async () => {
+  await loadData();
+  showScreen('home');
+})();
+</script>
+</body>
+</html>
