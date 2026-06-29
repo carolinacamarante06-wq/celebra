@@ -705,25 +705,48 @@ const S={events:{},currentEvent:null,currentGuest:null,selectedRsvp:null,
   scannerRunning:false,scanInterval:null};
 const STORAGE_KEY='alessa_events_v1';
 
-// ══ PERSISTENCE ══
-async function saveData(){
-  try{
-    if(!window.storage) return;
-    const toSave={};
-    Object.entries(S.events).forEach(([k,v])=>{toSave[k]=v;});
-    await window.storage.set(STORAGE_KEY,JSON.stringify(toSave));
-  }catch(e){console.warn('save error',e);}
+// ══ FIREBASE ══
+const firebaseConfig = {
+  apiKey: "AIzaSyC-VWXwr8f1jmToOVdjyGHqbFz-wJcvuQo",
+  authDomain: "celebra-alessa.firebaseapp.com",
+  projectId: "celebra-alessa",
+  storageBucket: "celebra-alessa.firebasestorage.app",
+  messagingSenderId: "309075629924",
+  appId: "1:309075629924:web:ef31fe8a69351361594c71"
+};
+
+let db = null;
+
+async function initFirebase() {
+  try {
+    const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
+    const { getFirestore, doc, setDoc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+    const app = initializeApp(firebaseConfig);
+    db = getFirestore(app);
+    window._fs = { doc, setDoc, getDoc };
+  } catch(e) { console.warn('Firebase init error:', e); }
 }
-async function loadData(){
-  try{
-    if(window.storage){
-      const r = await Promise.race([
-        window.storage.get(STORAGE_KEY),
-        new Promise((_,reject) => setTimeout(()=>reject(new Error('timeout')), 1500))
-      ]);
-      if(r && r.value) Object.assign(S.events, JSON.parse(r.value));
+
+async function saveData() {
+  if (!db) return;
+  try {
+    const { doc, setDoc } = window._fs;
+    const toSave = {};
+    Object.entries(S.events).forEach(([k,v]) => { toSave[k] = v; });
+    await setDoc(doc(db, 'plataforma', 'eventos'), { data: JSON.stringify(toSave) });
+  } catch(e) { console.warn('save error', e); }
+}
+
+async function loadData() {
+  if (!db) return;
+  try {
+    const { doc, getDoc } = window._fs;
+    const snap = await getDoc(doc(db, 'plataforma', 'eventos'));
+    if (snap.exists()) {
+      const saved = JSON.parse(snap.data().data);
+      Object.assign(S.events, saved);
     }
-  }catch(e){ console.warn('load error', e); }
+  } catch(e) { console.warn('load error', e); }
 }
 
 // ══ NAVIGATION ══
@@ -1352,15 +1375,10 @@ function checkUrlParams(){
 
 // ══ BOOT ══
 (async()=>{
+  await initFirebase();
   await loadData();
   checkUrlParams();
 })();
-
-// Fallback: if nothing rendered after 100ms, show guest home
-setTimeout(()=>{
-  const anyActive = document.querySelector('.screen.active');
-  if(!anyActive) checkUrlParams();
-}, 100);
 </script>
 </body>
 </html>
