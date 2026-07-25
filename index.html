@@ -840,14 +840,16 @@ function resetRsvpForm(){
   document.getElementById('group-members-section').style.display='none';
   document.getElementById('single-guest-section').style.display='block';
 }
-async function submitRsvp(){
+async async function submitRsvp(){
   const name=document.getElementById('guest-name').value.trim();
   const phone=document.getElementById('guest-phone').value.trim();
   const errEl=document.getElementById('rsvp-error');
   if(!name){errEl.innerHTML='<div class="alert alert-error">Digite seu nome.</div>';return;}
   if(!S.selectedRsvp){errEl.innerHTML='<div class="alert alert-error">Selecione se vai comparecer.</div>';return;}
-  const adultsPlus=parseInt(document.getElementById('companions-adult').value||0);
-  const kids=parseInt(document.getElementById('companions-kid').value||0);
+  const adultsEl=document.getElementById('companions-adult');
+  const kidsEl=document.getElementById('companions-kid');
+  const adultsPlus=adultsEl?parseInt(adultsEl.value||0):0;
+  const kids=kidsEl?parseInt(kidsEl.value||0):0;
   const dietary=document.getElementById('dietary').value.trim();
 
   S.currentEvent.guests=S.currentEvent.guests||[];
